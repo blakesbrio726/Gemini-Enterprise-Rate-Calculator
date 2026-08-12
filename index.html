@@ -294,7 +294,7 @@
 
 <script>
   // Paste your published Google Apps Script Web App URL below:
-  const WEB_APP_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2WAem5i_x6CpScTQeLb_bCxxjtK3A1AnI-oXHAKErN7j_cPYsRuAOfYh9K9QaEZTS/exec";
 
   function toggleUpgradeOption() {
     const plan = document.getElementById('currentPlan').value;
@@ -403,7 +403,7 @@
       fundingStatus: document.getElementById('fundingBadge').innerText.replace(/\n/g, ' ')
     };
 
-    if (WEB_APP_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+    if (WEB_APP_URL === "https://script.google.com/macros/s/AKfycbx2WAem5i_x6CpScTQeLb_bCxxjtK3A1AnI-oXHAKErN7j_cPYsRuAOfYh9K9QaEZTS/exec") {
       alert('Demo Mode: Please replace WEB_APP_URL in the JavaScript with your deployed Google Apps Script Web App URL.');
       btn.disabled = false;
       btn.innerText = 'Lock In Renewal Pricing & Funding Audit';
