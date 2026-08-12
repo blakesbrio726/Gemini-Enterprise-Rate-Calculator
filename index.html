@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brio Technologies - Google Workspace Renewal & Gemini Enterprise Rate Calculator</title>
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #1557b0;
+      --bg-gray: #f8f9fa;
+      --border-color: #dadce0;
+      --text-dark: #202124;
+      --text-muted: #5f6368;
+      --alert-bg: #e8f0fe;
+      --alert-border: #1a73e8;
+      --green-bg: #e6f4ea;
+      --green-text: #137333;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f6f8;
+      color: var(--text-dark);
+      padding: 24px;
+      margin: 0;
+    }
+
+    .calculator-card {
+      max-width: 840px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .calc-header {
+      background: #1e293b;
+      color: #ffffff;
+      padding: 24px 32px;
+    }
+
+    .calc-header h2 {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .calc-header p {
+      margin: 0;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    .calc-body {
+      padding: 32px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 640px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+    }
+
+    .form-control {
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    .range-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .results-panel {
+      background: var(--bg-gray);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 24px;
+      margin-top: 16px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      font-size: 15px;
+    }
+
+    .stat-row.total {
+      border-top: 2px solid var(--border-color);
+      margin-top: 8px;
+      padding-top: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .alert-box {
+      background: var(--alert-bg);
+      border-left: 4px solid var(--alert-border);
+      padding: 16px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .badge-funding {
+      background: var(--green-bg);
+      color: var(--green-text);
+      border: 1px solid #ceead6;
+      padding: 16px;
+      border-radius: 6px;
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .badge-funding strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-submit:disabled {
+      background: #a0c3ff;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator-card">
+  <div class="calc-header">
+    <h2>Google Workspace Renewal & Gemini Enterprise Calculator</h2>
+    <p>Model your attach-rate discounts and check eligibility for Google-funded deployment.</p>
+  </div>
+
+  <div class="calc-body">
+    <!-- Row 1: Seats -->
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="gwsSeats">1. Total Google Workspace Seats</label>
+        <div class="range-wrap">
+          <input type="number" id="gwsSeats" class="form-control" value="100" min="10" max="5000" oninput="calculateRates()">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="geSeats">2. Planned Gemini Enterprise Seats</label>
+        <div class="range-wrap">
+          <input type="number" id="geSeats" class="form-control" value="24" min="1" max="5000" oninput="calculateRates()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Current Workspace Plan & Upgrade Interest -->
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="currentPlan">3. Current Google Workspace Edition</label>
+        <select id="currentPlan" class="form-control" onchange="toggleUpgradeOption()">
+          <option value="business_starter">Business Starter</option>
+          <option value="business_standard" selected>Business Standard</option>
+          <option value="business_plus">Business Plus</option>
+          <option value="enterprise_starter">Enterprise Starter</option>
+          <option value="enterprise_standard">Enterprise Standard</option>
+          <option value="enterprise_plus">Enterprise Plus</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="upgradeGroup">
+        <label for="upgradeInterest">4. Interested in Workspace Upgrade at Renewal?</label>
+        <select id="upgradeInterest" class="form-control">
+          <option value="yes">Yes, show upgrade bundling incentives</option>
+          <option value="maybe">Open to evaluating options</option>
+          <option value="no">No, maintain current plan tier</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Row 3: Renewal Window & Use Case -->
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="renewalDate">5. Google Workspace Renewal Window</label>
+        <select id="renewalDate" class="form-control">
+          <option value="q3_2026">Q3 2026 (Immediate)</option>
+          <option value="q4_2026" selected>Q4 2026 (Oct - Dec)</option>
+          <option value="q1_2027">Q1 2027</option>
+          <option value="q2_2027">Q2 2027 or Later</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="useCase">6. Primary AI & Agent Use Case</label>
+        <select id="useCase" class="form-control">
+          <option value="agents_connectors">Custom AI Agents & Data Connectors</option>
+          <option value="agentic_rag">Agentic RAG & Knowledge Integration</option>
+          <option value="workflow_automation">Cross-System Workflow Automation</option>
+          <option value="evaluation">General Platform Evaluation</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Optimization Banner -->
+    <div id="optimizationAlert" class="alert-box"></div>
+
+    <!-- Calculation Results -->
+    <div class="results-panel">
+      <div class="stat-row">
+        <span>Current Attach Rate:</span>
+        <strong id="attachRateText">24.0%</strong>
+      </div>
+      <div class="stat-row">
+        <span>Discount Tier Applied:</span>
+        <strong id="discountTierText">Tier 1 (Up to 15% Off)</strong>
+      </div>
+      <div class="stat-row">
+        <span>Est. Monthly List Price ($30/seat):</span>
+        <span id="listPriceText">$720.00 / mo</span>
+      </div>
+      <div class="stat-row">
+        <span>Estimated Volume Discount:</span>
+        <span id="discountValText">-$108.00 / mo</span>
+      </div>
+      <div class="stat-row total">
+        <span>Estimated Monthly Net Total:</span>
+        <span id="netTotalText">$612.00 / mo</span>
+      </div>
+    </div>
+
+    <!-- Deployment Funding Badge -->
+    <div id="fundingBadge" class="badge-funding"></div>
+
+    <!-- Lead Capture -->
+    <div style="margin-top: 24px;">
+      <div class="form-group">
+        <label for="workEmail">Work Email Address (to receive official proposal):</label>
+        <input type="email" id="workEmail" class="form-control" placeholder="name@company.com">
+      </div>
+      <button class="btn-submit" onclick="submitQuote()">Lock In Renewal Pricing & Funding Audit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Paste your published Google Apps Script Web App URL below:
+  const WEB_APP_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+  function toggleUpgradeOption() {
+    const plan = document.getElementById('currentPlan').value;
+    const upgradeGroup = document.getElementById('upgradeGroup');
+    if (plan === 'enterprise_plus') {
+      upgradeGroup.style.display = 'none';
+    } else {
+      upgradeGroup.style.display = 'flex';
+    }
+  }
+
+  function calculateRates() {
+    const gwsSeats = parseInt(document.getElementById('gwsSeats').value) || 0;
+    const geSeats = parseInt(document.getElementById('geSeats').value) || 0;
+    const basePricePerSeat = 30; // $30/seat standard list rate
+
+    if (gwsSeats <= 0 || geSeats <= 0) return;
+
+    const attachRate = (geSeats / gwsSeats) * 100;
+    let discountPct = 0.15; // Tier 1: default up to 15%
+    let tierName = "Tier 1 (Up to 15% Off)";
+
+    if (attachRate >= 50) {
+      discountPct = 0.40;
+      tierName = "Tier 3 (Up to 40% Off)";
+    } else if (attachRate >= 25) {
+      discountPct = 0.25;
+      tierName = "Tier 2 (Up to 25% Off)";
+    }
+
+    const listTotal = geSeats * basePricePerSeat;
+    const discountVal = listTotal * discountPct;
+    const netTotal = listTotal - discountVal;
+
+    document.getElementById('attachRateText').innerText = attachRate.toFixed(1) + '%';
+    document.getElementById('discountTierText').innerText = tierName;
+    document.getElementById('listPriceText').innerText = '$' + listTotal.toFixed(2) + ' / mo';
+    document.getElementById('discountValText').innerText = '-$' + discountVal.toFixed(2) + ' / mo';
+    document.getElementById('netTotalText').innerText = '$' + netTotal.toFixed(2) + ' / mo';
+
+    // Check step-cliff optimization alert
+    const alertBox = document.getElementById('optimizationAlert');
+
+    let nextTierSeats = 0;
+    let nextTierPct = 0;
+
+    if (attachRate < 25) {
+      nextTierSeats = Math.ceil(gwsSeats * 0.25);
+      nextTierPct = 25;
+    } else if (attachRate < 50) {
+      nextTierSeats = Math.ceil(gwsSeats * 0.50);
+      nextTierPct = 50;
+    }
+
+    if (nextTierSeats > 0 && (nextTierSeats - geSeats) <= 5) {
+      const additionalSeats = nextTierSeats - geSeats;
+      const nextDiscountPct = nextTierPct === 25 ? 0.25 : 0.40;
+      const nextList = nextTierSeats * basePricePerSeat;
+      const nextNet = nextList - (nextList * nextDiscountPct);
+      const diff = netTotal - nextNet;
+
+      if (diff > 0) {
+        alertBox.style.display = "block";
+        alertBox.innerHTML = `💡 <strong>Step-Discount Optimization Alert:</strong> Adding just <strong>${additionalSeats} license(s)</strong> reaches a <strong>${nextTierPct}% attach rate</strong>. Re-calculated Total: <strong>$${nextNet.toFixed(2)}/mo</strong> — saving you <strong>$${diff.toFixed(2)}/month</strong> while giving you more seats!`;
+      } else {
+        alertBox.style.display = "block";
+        alertBox.innerHTML = `💡 <strong>Tip:</strong> Reaching ${nextTierPct}% attach rate requires adding ${additionalSeats} seat(s).`;
+      }
+    } else {
+      alertBox.style.display = "none";
+    }
+
+    // Funding Badge Logic
+    const fundingBadge = document.getElementById('fundingBadge');
+    if (geSeats >= 250) {
+      fundingBadge.innerHTML = `<strong>🎁 Status: Qualified for Enterprise Tier 1 Google Funding</strong>Because your planned deployment exceeds 250 seats, Google funds Brio Technologies directly to manage custom AI agent architecture, data connector integration (Salesforce/Jira), and enterprise onboarding at $0 line-item cost.`;
+    } else if (geSeats >= 100) {
+      fundingBadge.innerHTML = `<strong>🎁 Status: Qualified for 100% Google-Funded Deployment</strong>Because your deployment exceeds 100 seats, Google directly pays Brio Technologies to handle your technical configuration and onboarding. Zero partner service fees billed to your business.`;
+    } else {
+      fundingBadge.innerHTML = `<strong>ℹ️ Status: Standard Self-Service Onboarding & Step Discounts Apply</strong>Step-discount savings are active. Accounts scaling above 100 seats automatically qualify for Google-funded implementation support.`;
+    }
+  }
+
+  function submitQuote() {
+    const email = document.getElementById('workEmail').value;
+    if (!email || !email.includes('@')) {
+      alert('Please enter a valid work email address.');
+      return;
+    }
+
+    const btn = document.querySelector('.btn-submit');
+    btn.disabled = true;
+    btn.innerText = 'Submitting...';
+
+    const payload = {
+      email: email,
+      gwsSeats: document.getElementById('gwsSeats').value,
+      geSeats: document.getElementById('geSeats').value,
+      attachRate: document.getElementById('attachRateText').innerText,
+      discountTier: document.getElementById('discountTierText').innerText,
+      currentPlan: document.getElementById('currentPlan').value,
+      upgradeInterest: document.getElementById('upgradeInterest')?.value || 'N/A',
+      renewalDate: document.getElementById('renewalDate').value,
+      useCase: document.getElementById('useCase').value,
+      netTotal: document.getElementById('netTotalText').innerText,
+      fundingStatus: document.getElementById('fundingBadge').innerText.replace(/\n/g, ' ')
+    };
+
+    if (WEB_APP_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+      alert('Demo Mode: Please replace WEB_APP_URL in the JavaScript with your deployed Google Apps Script Web App URL.');
+      btn.disabled = false;
+      btn.innerText = 'Lock In Renewal Pricing & Funding Audit';
+      return;
+    }
+
+    fetch(WEB_APP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      alert('Thank you! Your Workspace renewal rate calculation and funding audit request have been recorded. A Brio specialist will reach out shortly.');
+      btn.innerText = 'Submitted Successfully!';
+    })
+    .catch(err => {
+      console.error(err);
+      alert('An error occurred submitting your request. Please try again.');
+      btn.disabled = false;
+      btn.innerText = 'Lock In Renewal Pricing & Funding Audit';
+    });
+  }
+
+  // Initial Run
+  toggleUpgradeOption();
+  calculateRates();
+</script>
+
+</body>
+</html>
