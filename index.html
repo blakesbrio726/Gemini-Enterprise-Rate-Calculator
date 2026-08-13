@@ -154,27 +154,20 @@
       font-size: 15px;
     }
 
-    .btn-submit {
-      width: 100%;
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: background 0.2s;
+    .audit-notice {
+      margin-top: 24px;
+      padding: 18px 20px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-dark);
+      line-height: 1.5;
     }
 
-    .btn-submit:hover {
-      background: var(--primary-dark);
-    }
-
-    .btn-submit:disabled {
-      background: #a0c3ff;
-      cursor: not-allowed;
+    .audit-notice strong {
+      color: var(--primary-dark);
     }
   </style>
 </head>
@@ -281,21 +274,14 @@
     <!-- Deployment Funding Badge -->
     <div id="fundingBadge" class="badge-funding"></div>
 
-    <!-- Lead Capture -->
-    <div style="margin-top: 24px;">
-      <div class="form-group">
-        <label for="workEmail">Work Email Address (to receive official proposal):</label>
-        <input type="email" id="workEmail" class="form-control" placeholder="name@company.com">
-      </div>
-      <button class="btn-submit" onclick="submitQuote()">Lock In Renewal Pricing & Funding Audit</button>
+    <!-- Next Steps Notice -->
+    <div class="audit-notice">
+      <strong>Ready to lock in your rate?</strong> Reply directly to your Brio Technologies email with your seat count to request an official <strong>Renewal Pricing & Funding Audit</strong>.
     </div>
   </div>
 </div>
 
 <script>
-  // Paste your published Google Apps Script Web App URL below:
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2WAem5i_x6CpScTQeLb_bCxxjtK3A1AnI-oXHAKErN7j_cPYsRuAOfYh9K9QaEZTS/exec";
-
   function toggleUpgradeOption() {
     const plan = document.getElementById('currentPlan').value;
     const upgradeGroup = document.getElementById('upgradeGroup');
@@ -378,56 +364,6 @@
     }
   }
 
-  function submitQuote() {
-    const email = document.getElementById('workEmail').value;
-    if (!email || !email.includes('@')) {
-      alert('Please enter a valid work email address.');
-      return;
-    }
-
-    const btn = document.querySelector('.btn-submit');
-    btn.disabled = true;
-    btn.innerText = 'Submitting...';
-
-    const payload = {
-      email: email,
-      gwsSeats: document.getElementById('gwsSeats').value,
-      geSeats: document.getElementById('geSeats').value,
-      attachRate: document.getElementById('attachRateText').innerText,
-      discountTier: document.getElementById('discountTierText').innerText,
-      currentPlan: document.getElementById('currentPlan').value,
-      upgradeInterest: document.getElementById('upgradeInterest')?.value || 'N/A',
-      renewalDate: document.getElementById('renewalDate').value,
-      useCase: document.getElementById('useCase').value,
-      netTotal: document.getElementById('netTotalText').innerText,
-      fundingStatus: document.getElementById('fundingBadge').innerText.replace(/\n/g, ' ')
-    };
-
-    if (WEB_APP_URL === "https://script.google.com/macros/s/AKfycbx2WAem5i_x6CpScTQeLb_bCxxjtK3A1AnI-oXHAKErN7j_cPYsRuAOfYh9K9QaEZTS/exec") {
-      alert('Demo Mode: Please replace WEB_APP_URL in the JavaScript with your deployed Google Apps Script Web App URL.');
-      btn.disabled = false;
-      btn.innerText = 'Lock In Renewal Pricing & Funding Audit';
-      return;
-    }
-
-    fetch(WEB_APP_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(() => {
-      alert('Thank you! Your Workspace renewal rate calculation and funding audit request have been recorded. A Brio specialist will reach out shortly.');
-      btn.innerText = 'Submitted Successfully!';
-    })
-    .catch(err => {
-      console.error(err);
-      alert('An error occurred submitting your request. Please try again.');
-      btn.disabled = false;
-      btn.innerText = 'Lock In Renewal Pricing & Funding Audit';
-    });
-  }
-
   // Initial Run
   toggleUpgradeOption();
   calculateRates();
@@ -435,3 +371,5 @@
 
 </body>
 </html>
+
+
